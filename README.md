@@ -37,4 +37,8 @@ combination of linear scan and depth first search. The source code is in `src/St
 * Credits for art and sound assets goes to [MadHead](https://www.madhead.com/) for creating
 this awesome game.
   
-* Copyright of original music belongs to MadHead, recreated by me.
+* Copyright of original music belongs to MadHead. Music inside this spinoff game recreated by me based on original music.
+  
+    Musics:
+    * [Battle](https://www.youtube.com/watch?v=s_bRrbKfwxQ)
+    * [Moonlight Theme](https://www.youtube.com/watch?v=N93gdhFEsBo)
