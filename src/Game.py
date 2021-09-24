@@ -2,15 +2,14 @@ import pygame
 pygame.init()       # Initialize the pygame before import any other module
 
 import src.CONSTANTS as C
-import src.CONFIG as CF
 
 # Sets the screen mode here.
 pygame.display.set_mode( (C.SCREEN_WIDTH, C.SCREEN_HEIGHT), pygame.SCALED )
 clock = pygame.time.Clock()
+pygame.mouse.set_visible(False)
 
 # Importing Game related stuff
-import src.States.AbstractState as AbstractState
-import src.States.Action as Action
+import src.States.MainMenu as MainMenu
 
 # Singleton Game instance. The game loop resides here.
 # A Game instance is a state machine. In each game loop, the state's
@@ -21,7 +20,7 @@ import src.States.Action as Action
 # will be called.
 class Game:
     def __init__(self):
-        self._state = Action.Action(clock)
+        self._state = MainMenu.MainMenu(clock)
 
     def run(self):
         while self._state is not None:

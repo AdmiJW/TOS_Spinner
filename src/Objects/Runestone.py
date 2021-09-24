@@ -53,6 +53,21 @@ class Runestone(pygame.sprite.Sprite):
         self.hitbox_rect, another_runestone.hitbox_rect = another_runestone.hitbox_rect, self.hitbox_rect
 
 
+    # Moves the runestone's position to said row and column.
+    def move_runestone_to(self, row: int, col: int):
+        self.row, self.col = row, col
+        self.top = CF.BOARD_OFFSET[1] + row * C.Sprite.TILE_SIZE_SCALED[1]
+        self.left = CF.BOARD_OFFSET[0] + col * C.Sprite.TILE_SIZE_SCALED[0]
+        self.hitbox_rect = self.image.get_rect(top=self.top, left=self.left)
+
+
+    # If runestone is falling (Render rect not at its supposed place - Unstable
+    def is_stable(self):
+        return self.top - CF.RUNESTONE_STABILITY_TOLERANCE < self.render_rect.top < self.top + \
+               CF.RUNESTONE_STABILITY_TOLERANCE
+
+
+
     # Makes the rendering to be done at the mouse's location. This method only changes the render_rect's position
     # and nothing else. This gives benefit of runestone moving back to its supposed place when released
     def follow_mouse(self, x, y):
@@ -62,6 +77,7 @@ class Runestone(pygame.sprite.Sprite):
     # Tests if a point is inside of the render rectangle
     def is_point_collide_render_rect(self, x, y):
         return self.render_rect.collidepoint(x, y)
+
 
     # Tests if a point is inside of the collide rectangle.
     # Some small optimization you can do is, collide rectangle is smaller, and is collide only IF is collide render rect
@@ -77,8 +93,14 @@ class Runestone(pygame.sprite.Sprite):
     def update(self, dt):
         top_increment = ( self.top - self.render_rect.top ) / CF.RUNESTONE_TWEEN_DIVISOR * dt
         left_increment = ( self.left - self.render_rect.left ) / CF.RUNESTONE_TWEEN_DIVISOR * dt
-        self.render_rect.top += top_increment
-        self.render_rect.left += left_increment
+        self.render_rect.top += round(top_increment)
+        self.render_rect.left += round(left_increment)
+
+
+    # Updates the position, but only falling motion (vertical)
+    def update_linear(self, dt):
+        # Vertical
+        self.render_rect.top = min(self.top, self.render_rect.top + round(CF.RUNESTONE_LINEAR_FALL_SPEED * dt) )
 
 
     # To overwrite the regular draw method

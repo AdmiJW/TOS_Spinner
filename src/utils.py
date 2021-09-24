@@ -88,56 +88,21 @@ def show_fps_if_set(render_func):
     return decorated_render_func
 
 
+# Displays custom mouse.
+MOUSE_IMG = pygame.transform.smoothscale(
+    pygame.image.load( C.Sprite.MOUSE_PATH ).convert_alpha(),
+    (25,36)
+)
+def draw_mouse(render_func):
+    @wraps(render_func)
+    def decorated_render_func(self):
+        render_func(self)
+        if CF.USE_CUSTOM_CURSOR:
+            self._screen.blit( MOUSE_IMG, pygame.mouse.get_pos() )
+    return decorated_render_func
+
+
+
 # Return value clamped by the minimum and maximum value.
 def clamp(minimum, val, maximum):
     return max(minimum, min(maximum, val) )
-
-
-
-
-############################
-# Utility Classes
-############################
-# Disjoint Set Implementation
-class DisjointSet:
-    # Node
-    class DSNode:
-        def __init__(self, obj):
-            self.value = obj
-            self.size = 1
-            self.parent = None
-        def __str__(self):
-            return f"<Disjoint Set Node {hash(self)}, size {self.size}, value {self.value}>"
-
-
-    def __init__(self, objects):
-        self.lookup = dict()
-        self.add_objects(*objects)
-
-
-    def add_objects(self, *objects):
-        for obj in objects:
-            self.lookup[obj] = DisjointSet.DSNode( obj )
-
-
-    def get_parent_node(self, obj):
-        if obj not in self.lookup:
-            raise AttributeError("Object not in Disjoint set!")
-        parent_node = self.lookup[obj]
-        while parent_node.parent is not None:
-            parent_node = parent_node.parent
-        # Optimization - Short circuit the parent path. BE CAREFUL DON'T CAUSE CIRCULAR REFERENCE
-        if parent_node is not self.lookup[obj]:
-            self.lookup[obj].parent = parent_node
-        return parent_node
-
-
-    def union(self, obj1, obj2):
-        parent1 = self.get_parent_node(obj1)
-        parent2 = self.get_parent_node(obj2)
-        if parent1 is parent2: return
-
-        greater = parent1 if parent1.size > parent2.size else parent2
-        lesser = parent1 if greater is parent2 else parent2
-        lesser.parent = greater
-        greater.size += lesser.size
